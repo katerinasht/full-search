@@ -3,11 +3,11 @@ from get_spn import get_spn
 import pygame
 import requests
 
-def pygame_visual():
+def pygame_visual(toponym_longitude, toponym_lattitude):
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
     spn = get_spn(corners)
-    show_map(",".join(spn), screen)
+    show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
     running = True
     while running:
         for event in pygame.event.get():
@@ -18,17 +18,29 @@ def pygame_visual():
                     if event.key == pygame.K_PAGEUP:
                         spn[0] = str(float(spn[0]) + 0.05)
                         spn[1] = str(float(spn[1]) + 0.05)
-                        show_map(",".join(spn), screen)
-                    if event.key == pygame.K_PAGEDOWN:
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
+                    elif event.key == pygame.K_PAGEDOWN:
                         spn[0] = str(float(spn[0]) - 0.05)
                         spn[1] = str(float(spn[1]) - 0.05)
-                        show_map(",".join(spn), screen)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
+                    elif event.key == pygame.K_UP:
+                        toponym_lattitude = str(float(toponym_lattitude) + 0.05)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
+                    elif event.key == pygame.K_DOWN:
+                        toponym_lattitude = str(float(toponym_lattitude) - 0.05)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
+                    elif event.key == pygame.K_RIGHT:
+                        toponym_longitude = str(float(toponym_longitude) + 0.05)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
+                    elif event.key == pygame.K_LEFT:
+                        toponym_longitude = str(float(toponym_longitude) - 0.05)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude)
                 except Exception:
                     print("Упс! Что-то пошло не так")
     pygame.quit()
 
 
-def show_map(spn, screen):
+def show_map(spn, screen, toponym_longitude, toponym_lattitude):
     geocoder_api_server = "http://static-maps.yandex.ru/1.x/?"
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
@@ -58,5 +70,5 @@ else:
     corners = toponym["boundedBy"]["Envelope"]
     toponym_coodrinates = toponym["Point"]["pos"]
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
-    pygame_visual()
+    pygame_visual(toponym_longitude, toponym_lattitude)
 
