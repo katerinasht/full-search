@@ -119,8 +119,7 @@ def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points)
         pygame.display.flip()
 
 
-#toponym_to_find = ",".join(input().split())
-toponym_to_find = "33,44"
+toponym_to_find = ",".join(input().split())
 geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 geocoder_params = {
     "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
