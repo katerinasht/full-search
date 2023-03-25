@@ -5,7 +5,7 @@ import requests
 
 def pygame_visual(toponym_longitude, toponym_lattitude):
     pygame.init()
-    screen = pygame.display.set_mode((600, 500))
+    screen = pygame.display.set_mode((600, 522))
     spn = get_spn(corners)
     points = []
     text = ""
@@ -88,6 +88,17 @@ def new_place(text):
         toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
         return str(toponym.split()[0]), str(toponym.split()[1])
 
+
+def adress(adress):
+    geocoder_request = "http://geocode-maps.yandex.ru/1.x/?"
+    response = requests.get(geocoder_request, params={"apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
+                                                      "geocode": adress, "format": "json"})
+    if response.ok:
+        json_response = response.json()
+        toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["text"]
+        return str(toponym)
+
+
 def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points):
     geocoder_api_server = "http://static-maps.yandex.ru/1.x/?"
     map_params = {
@@ -101,30 +112,37 @@ def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points)
         fp.write(response.content)
         fp.seek(0)
         screen.blit(pygame.image.load(fp), (0, 0))
-        pygame.draw.rect(screen, (0, 0, 0), (0, 450, 600, 50))
-        pygame.draw.rect(screen, (255, 255, 255), (530, 465, 65, 20))
-        font = pygame.font.SysFont(None, 27)
-        img = font.render('Искать', True, (0, 0, 0))
-        screen.blit(img, (530, 465))
-        pygame.draw.rect(screen, (255, 255, 255), (530, 435, 65, 20))
-        font = pygame.font.SysFont(None, 27)
-        img = font.render('Отмена', True, (0, 0, 0))
-        screen.blit(img, (530, 435))
-        img = font.render(text, True, (255, 255, 255))
-        screen.blit(img, (10, 465))
-        pygame.draw.rect(screen, (255, 255, 255), (10, 10, 65, 15))
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('схема', True, (0, 0, 0))
-        screen.blit(img, (10, 10))
-        pygame.draw.rect(screen, (255, 255, 255), (10, 30, 65, 15))
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('спутник', True, (0, 0, 0))
-        screen.blit(img, (10, 30))
-        pygame.draw.rect(screen, (255, 255, 255), (10, 50, 65, 15))
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('гибрид', True, (0, 0, 0))
-        screen.blit(img, (10, 50))
-        pygame.display.flip()
+    pygame.draw.rect(screen, (0, 0, 0), (0, 450, 600, 100))
+    pygame.draw.rect(screen, (255, 255, 255), (0, 490, 600, 2))
+    pygame.draw.rect(screen, (255, 255, 255), (530, 465, 65, 20))
+    font = pygame.font.SysFont(None, 27)
+    img = font.render('Искать', True, (0, 0, 0))
+    screen.blit(img, (530, 465))
+    pygame.draw.rect(screen, (0, 0, 0), (525, 430, 75, 30))
+    pygame.draw.rect(screen, (255, 255, 255), (530, 435, 65, 20))
+    font = pygame.font.SysFont(None, 27)
+    img = font.render('Отмена', True, (0, 0, 0))
+    screen.blit(img, (530, 435))
+    img = font.render(text, True, (255, 255, 255))
+    screen.blit(img, (10, 465))
+    pygame.draw.rect(screen, (255, 255, 255), (10, 10, 65, 15))
+    font = pygame.font.SysFont(None, 24)
+    img = font.render('схема', True, (0, 0, 0))
+    screen.blit(img, (10, 10))
+    pygame.draw.rect(screen, (255, 255, 255), (10, 30, 65, 15))
+    font = pygame.font.SysFont(None, 24)
+    img = font.render('спутник', True, (0, 0, 0))
+    screen.blit(img, (10, 30))
+    pygame.draw.rect(screen, (255, 255, 255), (10, 50, 65, 15))
+    font = pygame.font.SysFont(None, 24)
+    img = font.render('гибрид', True, (0, 0, 0))
+    screen.blit(img, (10, 50))
+    if points != []:
+        adr = adress(",".join([points[-1].split(",")[0], points[-1].split(",")[1]]))
+        font = pygame.font.SysFont(None, 15)
+        img = font.render(adr, True, (255, 255, 255))
+        screen.blit(img, (10, 495))
+    pygame.display.flip()
 
 
 toponym_to_find = "33,44"  # ",".join(input().split())
