@@ -10,7 +10,8 @@ def pygame_visual(toponym_longitude, toponym_lattitude):
     points = []
     text = ""
     l = "map"
-    show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+    pochta = True
+    show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
     running = True
     while running:
         for event in pygame.event.get():
@@ -21,54 +22,60 @@ def pygame_visual(toponym_longitude, toponym_lattitude):
                     if event.key == pygame.K_PAGEUP:
                         spn[0] = str(float(spn[0]) + 0.05)
                         spn[1] = str(float(spn[1]) + 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.key == pygame.K_PAGEDOWN:
                         spn[0] = str(float(spn[0]) - 0.05)
                         spn[1] = str(float(spn[1]) - 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.key == pygame.K_UP:
                         toponym_lattitude = str(float(toponym_lattitude) + 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.key == pygame.K_DOWN:
                         toponym_lattitude = str(float(toponym_lattitude) - 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.key == pygame.K_RIGHT:
                         toponym_longitude = str(float(toponym_longitude) + 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.key == pygame.K_LEFT:
                         toponym_longitude = str(float(toponym_longitude) - 0.05)
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     if len(pygame.key.name(event.key)) == 1:
                         text += to_rus(pygame.key.name(event.key))
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif pygame.key.name(event.key) == "space":
                         text += " "
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif pygame.key.name(event.key) == "backspace" and text != "":
                         text = text[:-1]
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                 except Exception:
                     print("Упс! Что-то пошло не так")
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.pos[0] > 10 and event.pos[0] < 75:
                     if event.pos[1] > 10 and event.pos[1] < 25:
                         l = "map"
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.pos[1] > 30 and event.pos[1] < 45:
                         l = "sat"
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     elif event.pos[1] > 50 and event.pos[1] < 65:
                         l = "sat,skl"
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                 if event.pos[0] > 530 and event.pos[0] < 595:
                     if event.pos[1] > 465 and event.pos[1] < 485:
                         toponym_longitude, toponym_lattitude = new_place(text)
                         points.append(",".join([toponym_longitude, toponym_lattitude, "pmlbs"]))
                         text = ""
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
                     if event.pos[1] > 435 and event.pos[1] < 455 and points != []:
                         points = points[:-1]
-                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points)
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
+                    if event.pos[1] > 411 and event.pos[1] < 422:
+                        pochta = False
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
+                    if event.pos[1] > 423 and event.pos[1] < 434:
+                        pochta = True
+                        show_map(",".join(spn), screen, toponym_longitude, toponym_lattitude, l, text, points, pochta)
     pygame.quit()
 
 
@@ -89,17 +96,23 @@ def new_place(text):
         return str(toponym.split()[0]), str(toponym.split()[1])
 
 
-def adress(adress):
+def adress(adress, pochta):
     geocoder_request = "http://geocode-maps.yandex.ru/1.x/?"
     response = requests.get(geocoder_request, params={"apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
                                                       "geocode": adress, "format": "json"})
     if response.ok:
         json_response = response.json()
-        toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]["text"]
-        return str(toponym)
+        toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"]["GeocoderMetaData"]
+        if pochta:
+            try:
+                return str(toponym["text"]) + ", " + str(toponym["Address"]["postal_code"])
+            except Exception:
+                return str(toponym["text"])
+        else:
+                return str(toponym["text"])
 
 
-def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points):
+def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points, pochta):
     geocoder_api_server = "http://static-maps.yandex.ru/1.x/?"
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
@@ -118,8 +131,15 @@ def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points)
     font = pygame.font.SysFont(None, 27)
     img = font.render('Искать', True, (0, 0, 0))
     screen.blit(img, (530, 465))
-    pygame.draw.rect(screen, (0, 0, 0), (525, 430, 75, 30))
+    pygame.draw.rect(screen, (0, 0, 0), (525, 410, 75, 60))
     pygame.draw.rect(screen, (255, 255, 255), (530, 435, 65, 20))
+    pygame.draw.rect(screen, (255, 255, 255), (530, 411, 65, 11))
+    pygame.draw.rect(screen, (255, 255, 255), (530, 423, 65, 11))
+    font = pygame.font.SysFont(None, 15)
+    img = font.render('Без индекса', True, (0, 0, 0))
+    screen.blit(img, (530, 411))
+    img = font.render('С индексом', True, (0, 0, 0))
+    screen.blit(img, (530, 423))
     font = pygame.font.SysFont(None, 27)
     img = font.render('Отмена', True, (0, 0, 0))
     screen.blit(img, (530, 435))
@@ -138,7 +158,7 @@ def show_map(spn, screen, toponym_longitude, toponym_lattitude, l, text, points)
     img = font.render('гибрид', True, (0, 0, 0))
     screen.blit(img, (10, 50))
     if points != []:
-        adr = adress(",".join([points[-1].split(",")[0], points[-1].split(",")[1]]))
+        adr = adress(",".join([points[-1].split(",")[0], points[-1].split(",")[1]]), pochta)
         font = pygame.font.SysFont(None, 15)
         img = font.render(adr, True, (255, 255, 255))
         screen.blit(img, (10, 495))
